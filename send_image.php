@@ -1,18 +1,16 @@
 <?php
-$imagePath = 'nid_1.jpg'; // Replace with the path to your image
-$url = 'http://localhost/python/php-ocr/process_image.php'; // Replace with the actual URL of the second PHP file
+$imagePath = 'nid_2.jpg';
+$url = 'http://localhost/python/php-ocr/process_image.php';
 
-// Initialize cURL
+
 $ch = curl_init($url);
 
-// Set cURL options
 curl_setopt($ch, CURLOPT_POST, true);
 curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
 curl_setopt($ch, CURLOPT_POSTFIELDS, [
     'image' => new CURLFile($imagePath)
 ]);
 
-// Execute cURL request
 $response = curl_exec($ch);
 
 // Check for errors
@@ -22,5 +20,4 @@ if (curl_errno($ch)) {
     echo 'Response from server: ' . $response;
 }
 
-// Close cURL
 curl_close($ch);

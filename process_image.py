@@ -1,6 +1,7 @@
 import easyocr
 from datetime import datetime
 import sys
+import json
 
 # Use a default image path if no argument is provided
 IMAGE_PATH = sys.argv[1] if len(sys.argv) > 1 else 'nid_2.jpg'
@@ -33,4 +34,12 @@ with open(file_name, 'w', encoding='utf-8') as f:
         f.write(line)
         f.write('\n')
 
-print(f"Text saved to {file_name}")
+# print(f"Text saved to {file_name}")
+
+# Output the OCR result as JSON
+response = {
+    'user_name': user_name,
+    'file_name': file_name,
+    'extracted_text': text
+}
+print(json.dumps(response))

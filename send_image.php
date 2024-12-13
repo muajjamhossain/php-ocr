@@ -1,6 +1,6 @@
 <?php
-$imagePath = 'nid_2.jpg'; // Replace with the path to your image
-$url = 'http://example.com/process_image.php'; // Replace with the actual URL of the second PHP file
+$imagePath = 'nid_1.jpg'; // Replace with the path to your image
+$url = 'http://localhost/python/php-ocr/process_image.php'; // Replace with the actual URL of the second PHP file
 
 // Initialize cURL
 $ch = curl_init($url);

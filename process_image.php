@@ -8,7 +8,7 @@ if ($_FILES['image']['error'] === UPLOAD_ERR_OK) {
         // Execute the Python script
         $command = escapeshellcmd("python3 process_image.py $destination");
         $output = shell_exec($command);
-        echo $output;
+        echo  " Output is$output";
     } else {
         echo 'Failed to move uploaded file.';
     }

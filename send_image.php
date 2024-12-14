@@ -21,3 +21,12 @@ if (curl_errno($ch)) {
 }
 
 curl_close($ch);
+
+// Process the response
+$responseData = json_decode($response, true);
+
+// print_r($responseData);
+
+// if ($responseData['status'] === 'success') {
+//     $extractedText = $responseData['extracted_text'];
+// }

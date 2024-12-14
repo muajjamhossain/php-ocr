@@ -1,16 +1,19 @@
 <?php
 if ($_FILES['image']['error'] === UPLOAD_ERR_OK) {
     $uploadedFile = $_FILES['image']['tmp_name'];
-    $destination = 'uploads/' . basename($_FILES['image']['name']); // Ensure the 'uploads' directory exists and is writable
-
+    $originalName = pathinfo($_FILES['image']['name'], PATHINFO_FILENAME);
+    $extension = pathinfo($_FILES['image']['name'], PATHINFO_EXTENSION);
+    $timestamp = time(); // Current timestamp
+    $destination = "uploads/{$originalName}-{$timestamp}.{$extension}";
+    
     if (move_uploaded_file($uploadedFile, $destination)) {
-        // Execute the Python script with the uploaded image
         $command = escapeshellcmd("python process_image.py $destination");
         $output = shell_exec($command);
 
-        // Return the OCR output to the client
         header('Content-Type: application/json');
-        echo json_encode(['success' => true, 'output' => $output]);
+        // echo json_encode(['success' => true, 'output' => $output]);
+        echo json_encode(['success' => true, 'output' => json_decode($output, true)], JSON_UNESCAPED_UNICODE);
+
     } else {
         header('Content-Type: application/json');
         echo json_encode(['success' => false, 'message' => 'Failed to move uploaded file.']);

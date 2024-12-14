@@ -40,6 +40,7 @@ with open(file_name, 'w', encoding='utf-8') as f:
 response = {
     'user_name': user_name,
     'file_name': file_name,
+    'status' : 'success',
     'extracted_text': text
 }
 print(json.dumps(response))

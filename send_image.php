@@ -1,5 +1,19 @@
 <?php
-$imagePath = 'nid_2.jpg';
+
+if (!isset($_FILES['nid_image']) || $_FILES['nid_image']['error'] !== UPLOAD_ERR_OK) {
+    echo "Error: No file uploaded or upload failed.";
+    exit;
+}
+
+$filePath = $_FILES['nid_image']['tmp_name'];
+
+if (!file_exists($filePath)) {
+    echo "Error: File does not exist.";
+    exit;
+}
+
+$imagePath = $filePath;
+// $imagePath = 'nid_4.jpg';
 $url = 'http://localhost/python/php-ocr/process_image.php';
 
 
@@ -22,11 +36,4 @@ if (curl_errno($ch)) {
 
 curl_close($ch);
 
-// Process the response
 $responseData = json_decode($response, true);
-
-// print_r($responseData);
-
-// if ($responseData['status'] === 'success') {
-//     $extractedText = $responseData['extracted_text'];
-// }

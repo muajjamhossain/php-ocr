@@ -5,43 +5,40 @@ if (!isset($_FILES['nid_image']) || $_FILES['nid_image']['error'] !== UPLOAD_ERR
     exit;
 }
 
+// Step 1: Handle File Upload
 $filePath = $_FILES['nid_image']['tmp_name'];
-
 $uploadsDir = 'uploads/';
 if (!is_dir($uploadsDir)) {
-    mkdir($uploadsDir, 0777, true);
+    mkdir($uploadsDir, 0777, true); // Create the uploads directory if it doesn't exist
 }
 $imageName = basename($_FILES['nid_image']['name']);
-$uploadedImagePath = $uploadsDir . $imageName;
+$timestamp = time(); // Add timestamp to avoid overwriting files
+$uploadedImagePath = $uploadsDir . pathinfo($imageName, PATHINFO_FILENAME) . "-{$timestamp}." . pathinfo($imageName, PATHINFO_EXTENSION);
 
 if (!move_uploaded_file($filePath, $uploadedImagePath)) {
     echo "Error: Failed to save the uploaded file.";
     exit;
 }
 
-$url = 'http://localhost/python/php-ocr/process_image.php';
-$ch = curl_init($url);
+// Step 2: Process Image Using Python Script
+$command = escapeshellcmd("python process_image.py $uploadedImagePath");
+$output = shell_exec($command);
 
-curl_setopt($ch, CURLOPT_POST, true);
-curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-curl_setopt($ch, CURLOPT_POSTFIELDS, [
-    'image' => new CURLFile($uploadedImagePath)
-]);
-
-$response = curl_exec($ch);
-
-// Check for errors
-if (curl_errno($ch)) {
-    echo 'cURL error: ' . curl_error($ch);
+// Check if Python script executed successfully
+if ($output === null) {
+    echo "Error: Failed to execute the Python script.";
     exit;
 }
 
-curl_close($ch);
+// Decode Python script output
+$responseData = json_decode($output, true);
+if (json_last_error() !== JSON_ERROR_NONE) {
+    echo "Error: Failed to decode the Python script output.";
+    exit;
+}
 
-$responseData = json_decode($response, true);
-
+// Step 3: Display Results
 ?>
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -76,7 +73,7 @@ $responseData = json_decode($response, true);
     <img src="<?php echo htmlspecialchars($uploadedImagePath); ?>" alt="Uploaded Image">
     <h3>Server Response:</h3>
     <div class="response">
-        <pre><?php echo htmlspecialchars($response); ?></pre>
+        <pre><?php echo htmlspecialchars(json_encode($responseData, JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT)); ?></pre>
     </div>
 </body>
 </html>
